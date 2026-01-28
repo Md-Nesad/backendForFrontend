@@ -2,13 +2,17 @@ const express = require("express");
 const userRouter = require("./routers/userRouter");
 const app = express();
 const connectDb = require("./config/db");
+const productRouter = require("./routers/productRouter");
+const path = require("path");
 
 require("dotenv").config();
 const PORT = process.env.PORT || 4000;
 
 app.use(express.json());
 
-app.use("/uploads", express.static("uploads/images"));
+//upload image
+app.use("/uploads", express.static(path.join(__dirname, "uploads", "images")));
+
 //connect db
 connectDb();
 
@@ -17,7 +21,7 @@ app.get("/", (req, res) => res.send("Hello World!"));
 app.use("/api", userRouter);
 
 //form data router
-app.use("/api/forms", require("./routers/formRouter"));
+app.use("/api/product", productRouter);
 
 //404 not found middleware
 app.use((req, res, next) => {
