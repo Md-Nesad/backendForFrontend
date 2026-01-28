@@ -8,12 +8,16 @@ const PORT = process.env.PORT || 4000;
 
 app.use(express.json());
 
+app.use("/uploads", express.static("uploads/images"));
 //connect db
 connectDb();
 
-app.get("/", (req, res) => res.send(a));
+app.get("/", (req, res) => res.send("Hello World!"));
 
 app.use("/api", userRouter);
+
+//form data router
+app.use("/api/forms", require("./routers/formRouter"));
 
 //404 not found middleware
 app.use((req, res, next) => {
