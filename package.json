@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "node --watch server"
+    "server": "node --watch server"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
