@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const Product = require("../models/productModel");
 const upload = require("../middleware/upload");
+const uploadCloudinary = require("../utils/cloudinaryHelper");
 
-router.post("/create", upload.single("image"), async (req, res) => {
+router.post("/create", upload.array("image", 5), async (req, res) => {
   try {
     const { name, price, category, description } = req.body;
 
@@ -11,13 +12,23 @@ router.post("/create", upload.single("image"), async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    if (!req.file) {
-      return res.status(400).json({ message: "Please upload an image" });
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "Images required" });
     }
+
+    const uploadResults = await Promise.all(
+      req.files.map((file) => uploadCloudinary(file.buffer, "form-images")),
+    );
+
+    // const result = await uploadCloudinary(req.file.buffer, "form-images");
+
+    const images = uploadResults.map((result) => result.secure_url);
+
+    // const imagePaths = req.files.map((file) => `/uploads/${file.filename}`);
 
     const product = new Product({
       name,
-      image: `/uploads/${req.file.filename}`,
+      image: images,
       price,
       category,
       description,

@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 4000;
 app.use(express.json());
 
 //upload image
-app.use("/uploads", express.static(path.join(__dirname, "uploads", "images")));
+// app.use("/uploads", express.static(path.join(__dirname, "uploads", "images")));
 
 //connect db
 connectDb();
