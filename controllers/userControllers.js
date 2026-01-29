@@ -43,8 +43,33 @@ const signUp = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
-    const users = await User.find();
-    res.status(200).json(users);
+    //filter
+    const filter = {};
+    if (req.query.role) filter.role = req.query.role;
+
+    //pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const total = await User.countDocuments(filter);
+
+    const users = await User.find(filter)
+      .skip(skip)
+      .limit(limit)
+      .select("-password")
+      .sort({ userName: -1 });
+
+    res.status(200).json({
+      data: {
+        users,
+      },
+      pagination: {
+        page,
+        limit,
+        total,
+      },
+    });
   } catch (error) {
     res.status(500).send(error.message);
   }
